@@ -11,41 +11,26 @@ name_list = names.words()
 
 text = ''
 
-# def count_words(text):
-
-#     candidate_words = text.split()
-
-#     word_count = 0
-
-#     for candidate in candidate_words:
-#         word = re.sub(r'[^A-Za-z]+','', candidate)
-#         if word.lower() in word_list or word in name_list:
-#             # print("english word", word)
-#             word_count += 1
-#         else:
-#             pass
-#             # print('not english word or name', word)
-
-#     return word_count
-
-# def encrypt(text,key):
-#     encrypted = ""
-#     for i in text.lower():
-
-#         encrypted+=chr(ord(i)+key)
-#     return(encrypted)
 
 
-def encrypt(string, key):
+def encrypt(string,key):
     
     output = ''
-    for i in string.lower():
+    for i in string:
 
         if ord(i)>96 and ord(i)<123:
             a = ord(i) - 97
             new = a+key
             new_ascci = new%26 + 97
             output+=chr(new_ascci)
+
+        
+        if ord(i) > 65 and ord(i) < 97:
+            a = ord(i) - 65
+            new = a+key
+            new_ascci = new%26 + 65
+            output+=chr(new_ascci)
+        
 
         elif i == ' ':
             output += i
@@ -54,13 +39,45 @@ def encrypt(string, key):
     return output
 
 
-
 def decrypt(text,key):
    return encrypt(text, -key)
 
-def crack(text,key):
-    pass
 
 
-print(encrypt("Klz",10))
-print(decrypt("uvj",10))
+def crack(tar):
+    parse_in = 0
+    for i in range(len(tar.split())*26):
+        candidate_dec = decrypt(tar, i)
+        word_count = is_english_words(candidate_dec)
+        perce = int(word_count / len(candidate_dec.split()) * 100)
+        if perce > parse_in:
+            parse_in = perce 
+            decrypt_word = candidate_dec
+    return decrypt_word
+
+nltk.download('words')
+english_words = nltk.corpus.words.words()
+
+nltk.download('words')
+english_words = nltk.corpus.words.words()
+
+
+def is_english_words(sent):
+    new_word = sent.split()
+    count = 0
+    for i in new_word:
+        if i in english_words or i.lower() in english_words or i.upper() in english_words:
+            count += 1
+    return count
+
+
+
+if __name__ == '__main__':
+    a = encrypt('my age ten',10)
+    print(a)
+
+
+
+
+# print(encrypt("Klz",10))
+# print(decrypt("uvj",10))
